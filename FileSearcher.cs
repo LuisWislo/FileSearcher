@@ -7,7 +7,7 @@ namespace FileSearcher
 {
     class Piece
     {
-        int unary = 0; //0 - no lock, 1 - positive, 2 - kleene
+        int unary; //0 - no lock, 1 - positive, 2 - kleene
         string symbol;
         List<Piece> spawningAutomata;
         bool isAtomic = true;
@@ -72,6 +72,16 @@ namespace FileSearcher
             this.spawningAutomata.Add(piece);
         }
 
+        public string GetUnary()
+        {
+            switch(this.unary)
+            {
+                case 1: return "-Positive";
+                case 2: return "-Kleene";
+                default: return "-Default";
+            }
+        }
+
 
     }
     class FileSearcher
@@ -80,7 +90,7 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            FilesWithRegex("a+(b+(a+c))","lol");
+            FilesWithRegex("(abc+(abc+a#)*)*","lol");
         }
         
         static int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -118,32 +128,8 @@ namespace FileSearcher
         static void FilesWithRegex(string regex, string directory)
         {
             Piece automatas = ParseReg(regex);
-            Console.WriteLine(automatas.GetSpawningAutomata().Count);
-            PrintAutomata(automatas);
-
-            /*foreach(List<Piece> automata in automatas)
-            {
-                TestAutomata(automata, regex, 0);
-            }
-            
-            foreach(List<Piece> automata in automatas)
-            {
-                Console.Write("Automata: ");
-                foreach(Piece piece in automata)
-                {
-                    Console.Write(piece.ToString()+", ");
-                }
-
-                Console.WriteLine();
-            } 
-            //we need to create another automata
-            //check if there is anything between them
-            //nothing - concatenation
-            //+ create new automata
-            // parentheses make up a whole symbol
-            //check for locks
-            */
- 
+            //Console.WriteLine(automatas.GetSpawningAutomata().Count);
+            PrintAutomata(automatas,0);
         }
 
         static void TestAutomata(List<Piece> automata, string regex, int currentChar) //will also need directory
@@ -167,7 +153,7 @@ namespace FileSearcher
             mainPiece.SetAtomic(false);
             Piece currentPiece = new Piece();
             currentPiece.SetAtomic(false);                                                             
-            //   ab+dc
+            
             for (int i = 0; i < regex.Length; i++)
             {
                 if(regex[i] == '(')
@@ -187,39 +173,26 @@ namespace FileSearcher
 
                     int u = GetUnary(i,regex); 
                     if(u>0) i++;
-                    Console.WriteLine("new Unary Type " + u);
                     newRegex = newRegex.Substring(0,newRegex.Length-1);
-                    currentPiece = ParseReg(newRegex); //add kleene
-
-                    
-                    /*Piece newPiece = new Piece();
+                    Piece newPiece = ParseReg(newRegex);
                     newPiece.SetUnary(u);
-                    
-                    Console.WriteLine("The new regex is: " + newRegex);
-                    Piece toInsert = ParseReg(newRegex);
-                    newPiece.AddPiece(toInsert);
                     currentPiece.AddPiece(newPiece);
-                    //recursively call ParseReg, check for any lock
-                    //when you find a parenthesis, you make a piece that is not atomic and leads to another automata*/
+                    //currentPiece = ParseReg(newRegex); 
+                    //currentPiece.SetUnary(u);
+                    
                 }
                 else
                 {
                     int binary = GetBinary(i,regex);
-                    if(binary == 1) //means we found union
+                    if(binary == 1)
                     {
-                        //Console.WriteLine("Found Union!");
                         mainPiece.AddPiece(currentPiece);
                         currentPiece = new Piece();
                         currentPiece.SetAtomic(false);
                         continue;
-                        //i++;
                     }
-                    //check if we have parentheses first
-                    //if(regex[i] == '('){}
-                        //Do the parentheses thing
                     int unary = GetUnary(i, regex);
                     Piece p = new Piece(regex[i].ToString(), unary);
-                    //Console.WriteLine("Symbol "+p.ToString());
                     currentPiece.AddPiece(p);
                     if(unary>0) i++;
                 }
@@ -231,15 +204,28 @@ namespace FileSearcher
             return mainPiece;
         }
 
-        static void PrintAutomata(Piece piece)
-        {
-            Console.WriteLine("Automata:");
+        static void PrintAutomata(Piece piece, int tabs)
+        {   
+            PrintTabs(tabs);
+            Console.WriteLine("Automata " + piece.GetUnary()+":");
             foreach(Piece p in piece.GetSpawningAutomata())
             {
                 if(p.IsAtomic())
-                    Console.WriteLine(p.ToString());
+                {
+                    PrintTabs(tabs);
+                    Console.WriteLine(p.ToString()+" "+p.GetUnary());
+                }
+                    
                 else
-                    PrintAutomata(p);
+                    PrintAutomata(p, tabs+1);
+            }
+        }
+
+        static void PrintTabs(int tabs)
+        {
+            for (int i = 0; i < tabs; i++)
+            {
+                Console.Write("   ");
             }
         }
 
@@ -290,3 +276,12 @@ namespace FileSearcher
 }
     
 
+/*Piece newPiece = new Piece();
+                    newPiece.SetUnary(u);
+                    
+                    Console.WriteLine("The new regex is: " + newRegex);
+                    Piece toInsert = ParseReg(newRegex);
+                    newPiece.AddPiece(toInsert);
+                    currentPiece.AddPiece(newPiece);
+                    //recursively call ParseReg, check for any lock
+                    //when you find a parenthesis, you make a piece that is not atomic and leads to another automata*/
