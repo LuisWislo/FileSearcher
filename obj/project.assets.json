@@ -692,11 +692,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\roflm\\Desktop\\ocean eyes\\FileSearcher\\FileSearcher.csproj",
+      "projectUniqueName": "C:\\Users\\roflm\\Desktop\\kazooie\\FileSearcher\\FileSearcher.csproj",
       "projectName": "FileSearcher",
-      "projectPath": "C:\\Users\\roflm\\Desktop\\ocean eyes\\FileSearcher\\FileSearcher.csproj",
+      "projectPath": "C:\\Users\\roflm\\Desktop\\kazooie\\FileSearcher\\FileSearcher.csproj",
       "packagesPath": "C:\\Users\\roflm\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\roflm\\Desktop\\ocean eyes\\FileSearcher\\obj\\",
+      "outputPath": "C:\\Users\\roflm\\Desktop\\kazooie\\FileSearcher\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

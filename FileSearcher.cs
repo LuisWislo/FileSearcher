@@ -79,7 +79,8 @@ namespace FileSearcher
         static void Main(String[] args)
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
-            FilesWithRegex("a*+b*c*+d","lol");
+            //Console.WriteLine("hola");
+            FilesWithRegex("ac+bd","lol");
         }
         
         static int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -110,15 +111,17 @@ namespace FileSearcher
             switch(regex[current])
             {
                 case '+': return 1; //we have union
-                default: return 0;  //we have concatenation
+                default: return 0;  
             }
         }
 
         static void FilesWithRegex(string regex, string directory)
         {
-            List<List<Piece>> automatas = ParseRegex(regex);
+            Piece automatas = ParseReg(regex);
+            Console.WriteLine(automatas.GetSpawningAutomata().Count);
+            PrintAutomata(automatas);
 
-            foreach(List<Piece> automata in automatas)
+            /*foreach(List<Piece> automata in automatas)
             {
                 TestAutomata(automata, regex, 0);
             }
@@ -139,6 +142,7 @@ namespace FileSearcher
             //+ create new automata
             // parentheses make up a whole symbol
             //check for locks
+            */
  
         }
 
@@ -173,8 +177,10 @@ namespace FileSearcher
                 int binary = GetBinary(i,regex);
                 if(binary == 1) //means we found union
                 {
+                    Console.WriteLine("Found Union!");
                     mainPiece.AddPiece(currentPiece);
                     currentPiece = new Piece();
+                    currentPiece.SetAtomic(false);
                     i++;
                 }
                 //check if we have parentheses first
@@ -182,11 +188,28 @@ namespace FileSearcher
                     //Do the parentheses thing
                 int unary = GetUnary(i, regex);
                 Piece p = new Piece(regex[i].ToString(), unary);
+                Console.WriteLine("Symbol "+p.ToString());
                 currentPiece.AddPiece(p);
                 if(unary>0) i++;
             }
+            mainPiece.AddPiece(currentPiece);
+            //List<Piece> pieces = mainPiece.GetSpawningAutomata();
+
             return mainPiece;
         }
+
+        static void PrintAutomata(Piece piece)
+        {
+            Console.WriteLine("Automata:");
+            foreach(Piece p in piece.GetSpawningAutomata())
+            {
+                if(p.IsAtomic())
+                    Console.WriteLine(p.ToString());
+                else
+                    PrintAutomata(p);
+            }
+        }
+
         static List<List<Piece>> ParseRegex(string regex)
         {
             List<List<Piece>> automatas = new List<List<Piece>>();

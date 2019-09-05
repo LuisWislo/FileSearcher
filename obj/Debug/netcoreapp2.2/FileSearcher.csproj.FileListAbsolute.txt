@@ -20,3 +20,14 @@ C:\Users\roflm\Desktop\ocean eyes\FileSearcher\obj\Debug\netcoreapp2.2\FileSearc
 C:\Users\roflm\Desktop\ocean eyes\FileSearcher\obj\Debug\netcoreapp2.2\FileSearcher.AssemblyInfo.cs
 C:\Users\roflm\Desktop\ocean eyes\FileSearcher\obj\Debug\netcoreapp2.2\FileSearcher.dll
 C:\Users\roflm\Desktop\ocean eyes\FileSearcher\obj\Debug\netcoreapp2.2\FileSearcher.pdb
+C:\Users\roflm\Desktop\kazooie\FileSearcher\bin\Debug\netcoreapp2.2\FileSearcher.deps.json
+C:\Users\roflm\Desktop\kazooie\FileSearcher\bin\Debug\netcoreapp2.2\FileSearcher.runtimeconfig.json
+C:\Users\roflm\Desktop\kazooie\FileSearcher\bin\Debug\netcoreapp2.2\FileSearcher.runtimeconfig.dev.json
+C:\Users\roflm\Desktop\kazooie\FileSearcher\bin\Debug\netcoreapp2.2\FileSearcher.dll
+C:\Users\roflm\Desktop\kazooie\FileSearcher\bin\Debug\netcoreapp2.2\FileSearcher.pdb
+C:\Users\roflm\Desktop\kazooie\FileSearcher\obj\Debug\netcoreapp2.2\FileSearcher.csprojAssemblyReference.cache
+C:\Users\roflm\Desktop\kazooie\FileSearcher\obj\Debug\netcoreapp2.2\FileSearcher.csproj.CoreCompileInputs.cache
+C:\Users\roflm\Desktop\kazooie\FileSearcher\obj\Debug\netcoreapp2.2\FileSearcher.AssemblyInfoInputs.cache
+C:\Users\roflm\Desktop\kazooie\FileSearcher\obj\Debug\netcoreapp2.2\FileSearcher.AssemblyInfo.cs
+C:\Users\roflm\Desktop\kazooie\FileSearcher\obj\Debug\netcoreapp2.2\FileSearcher.dll
+C:\Users\roflm\Desktop\kazooie\FileSearcher\obj\Debug\netcoreapp2.2\FileSearcher.pdb
