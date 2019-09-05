@@ -9,31 +9,36 @@ namespace FileSearcher
     {
         int unary; //0 - no lock, 1 - positive, 2 - kleene
         string symbol;
-        List<Piece> spawningAutomata;
+        List<Piece> unions;
         bool isAtomic = true;
+        Piece concatenation;
+        bool hasContent;
         
 
         public Piece()
         {
-            this.spawningAutomata = new List<Piece>();
+            this.unions = new List<Piece>();
         }
 
         public Piece(string symbol)
         {
             this.symbol = symbol;
-            this.spawningAutomata = new List<Piece>();
+            this.unions = new List<Piece>();
+            this.hasContent = true;
         }
 
         public Piece(string symbol, int unary)
         {
             this.symbol = symbol;
             this.unary = unary;
-            this.spawningAutomata = new List<Piece>();
+            this.unions = new List<Piece>();
+            this.hasContent = true;
         }
 
         public void AddSymbol(string symbol)
         {
             this.symbol = symbol;
+            this.hasContent = true;
         }
 
         public void SetUnary(int unary)
@@ -44,6 +49,11 @@ namespace FileSearcher
         public void SetAtomic(bool isAtomic)
         {
             this.isAtomic = isAtomic;
+        }
+
+        public void SetNext(Piece piece)
+        {
+            this.concatenation = piece;
         }
 
         public override string ToString()
@@ -64,12 +74,34 @@ namespace FileSearcher
 
         public List<Piece> GetSpawningAutomata()
         {
-            return this.spawningAutomata;
+            return this.unions;
         }
 
-        public void AddPiece(Piece piece)
+        public void AddUnion(Piece piece)
         {
-            this.spawningAutomata.Add(piece);
+            this.unions.Add(piece);
+        }
+
+        public void Concatenate(Piece piece)
+        {
+            Piece current = this;
+
+            while(current.concatenation!=null)
+            {
+                current = current.concatenation;
+            }
+
+            current.concatenation = piece;
+        }
+
+        public bool HasContent()
+        {
+            return this.hasContent;
+        }
+
+        public string GetSymbol()
+        {
+            return this.symbol;
         }
 
         public string GetUnary()
@@ -82,6 +114,11 @@ namespace FileSearcher
             }
         }
 
+        public int GetNumericUnary()
+        {
+            return this.unary;
+        }
+
 
     }
     class FileSearcher
@@ -90,7 +127,7 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            FilesWithRegex("(abc+(abc+a#)*)*","lol");
+            FilesWithRegex("ac+b","lol");
         }
         
         static int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -128,31 +165,24 @@ namespace FileSearcher
         static void FilesWithRegex(string regex, string directory)
         {
             Piece automatas = ParseReg(regex);
+
             //Console.WriteLine(automatas.GetSpawningAutomata().Count);
-            PrintAutomata(automatas,0);
+            //PrintAutomata(automatas,0);
         }
 
-        static void TestAutomata(List<Piece> automata, string regex, int currentChar) //will also need directory
+        static void Print(Piece automata)
         {
-            foreach(Piece piece in automata)
+            foreach(Piece p in automata.GetSpawningAutomata())
             {
-                if(piece.IsAtomic())
-                {
-
-                }
-                else
-                {
-                    //TestAutomata()
-                }
+                
             }
         }
-
         static Piece ParseReg(string regex)
         {
             Piece mainPiece = new Piece();
-            mainPiece.SetAtomic(false);
+            //mainPiece.SetAtomic(false);
             Piece currentPiece = new Piece();
-            currentPiece.SetAtomic(false);                                                             
+            //currentPiece.SetAtomic(false);                                                             
             
             for (int i = 0; i < regex.Length; i++)
             {
@@ -174,9 +204,10 @@ namespace FileSearcher
                     int u = GetUnary(i,regex); 
                     if(u>0) i++;
                     newRegex = newRegex.Substring(0,newRegex.Length-1);
+                    //Console.WriteLine(newRegex);
                     Piece newPiece = ParseReg(newRegex);
                     newPiece.SetUnary(u);
-                    currentPiece.AddPiece(newPiece);
+                    currentPiece.AddUnion(newPiece);
                     //currentPiece = ParseReg(newRegex); 
                     //currentPiece.SetUnary(u);
                     
@@ -184,21 +215,28 @@ namespace FileSearcher
                 else
                 {
                     int binary = GetBinary(i,regex);
-                    if(binary == 1)
+                    if(binary == 1) //create different piece
                     {
-                        mainPiece.AddPiece(currentPiece);
+                        mainPiece.AddUnion(currentPiece);
                         currentPiece = new Piece();
-                        currentPiece.SetAtomic(false);
+                        //currentPiece.SetAtomic(false);
                         continue;
                     }
                     int unary = GetUnary(i, regex);
                     Piece p = new Piece(regex[i].ToString(), unary);
-                    currentPiece.AddPiece(p);
+                    if(!currentPiece.HasContent()){
+                        currentPiece = p;
+                    }
+                    else
+                    {
+                        currentPiece.Concatenate(p);
+                    }
+                    
                     if(unary>0) i++;
                 }
                 
             }
-            mainPiece.AddPiece(currentPiece);
+            mainPiece.AddUnion(currentPiece);
             //List<Piece> pieces = mainPiece.GetSpawningAutomata();
 
             return mainPiece;
@@ -225,38 +263,9 @@ namespace FileSearcher
         {
             for (int i = 0; i < tabs; i++)
             {
-                Console.Write("   ");
+                Console.Write(" ");
             }
         }
-
-        /*static List<List<Piece>> ParseRegex(string regex)
-        {
-            List<List<Piece>> automatas = new List<List<Piece>>();
-            //while loop
-            List<Piece> currentAutomata = new List<Piece>();
-
-            for (int i = 0; i < regex.Length; i++)
-            {
-                if(regex[i] == '(')
-                {
-                    //when you find a parenthesis, you make a piece that is not atomic and leads to another automata
-                }
-                int binary = GetBinary(i,regex);
-                if(binary == 1) //means we found union
-                {
-                    automatas.Add(currentAutomata);
-                    currentAutomata = new List<Piece>();
-                    i++;
-                }
-                int unary = GetUnary(i, regex);
-                Piece p = new Piece(regex[i].ToString(), unary);
-                currentAutomata.Add(p);
-                if(unary>0) i++;
-            }
-
-            automatas.Add(currentAutomata);
-            return automatas;
-        }*/
 
         static void PrintFiles(string directory)
         {
@@ -274,14 +283,3 @@ namespace FileSearcher
 
     }
 }
-    
-
-/*Piece newPiece = new Piece();
-                    newPiece.SetUnary(u);
-                    
-                    Console.WriteLine("The new regex is: " + newRegex);
-                    Piece toInsert = ParseReg(newRegex);
-                    newPiece.AddPiece(toInsert);
-                    currentPiece.AddPiece(newPiece);
-                    //recursively call ParseReg, check for any lock
-                    //when you find a parenthesis, you make a piece that is not atomic and leads to another automata*/
