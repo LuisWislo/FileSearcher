@@ -80,7 +80,7 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            FilesWithRegex("ac+bd","lol");
+            FilesWithRegex("a+(b+(a+c))","lol");
         }
         
         static int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -172,25 +172,58 @@ namespace FileSearcher
             {
                 if(regex[i] == '(')
                 {
-                    //when you find a parenthesis, you make a piece that is not atomic and leads to another automata
+                    string newRegex = "";
+                    int ptheses = 1;
+
+                    while(ptheses!=0)
+                    {
+                        i++;
+                        if(regex[i]=='(')
+                            ptheses++;
+                        else if(regex[i]==')')
+                            ptheses--;
+                        newRegex+=regex[i];
+                    }
+
+                    int u = GetUnary(i,regex); 
+                    if(u>0) i++;
+                    Console.WriteLine("new Unary Type " + u);
+                    newRegex = newRegex.Substring(0,newRegex.Length-1);
+                    currentPiece = ParseReg(newRegex); //add kleene
+
+                    
+                    /*Piece newPiece = new Piece();
+                    newPiece.SetUnary(u);
+                    
+                    Console.WriteLine("The new regex is: " + newRegex);
+                    Piece toInsert = ParseReg(newRegex);
+                    newPiece.AddPiece(toInsert);
+                    currentPiece.AddPiece(newPiece);
+                    //recursively call ParseReg, check for any lock
+                    //when you find a parenthesis, you make a piece that is not atomic and leads to another automata*/
                 }
-                int binary = GetBinary(i,regex);
-                if(binary == 1) //means we found union
+                else
                 {
-                    Console.WriteLine("Found Union!");
-                    mainPiece.AddPiece(currentPiece);
-                    currentPiece = new Piece();
-                    currentPiece.SetAtomic(false);
-                    i++;
+                    int binary = GetBinary(i,regex);
+                    if(binary == 1) //means we found union
+                    {
+                        //Console.WriteLine("Found Union!");
+                        mainPiece.AddPiece(currentPiece);
+                        currentPiece = new Piece();
+                        currentPiece.SetAtomic(false);
+                        continue;
+                        //i++;
+                    }
+                    //check if we have parentheses first
+                    //if(regex[i] == '('){}
+                        //Do the parentheses thing
+                    int unary = GetUnary(i, regex);
+                    Piece p = new Piece(regex[i].ToString(), unary);
+                    //Console.WriteLine("Symbol "+p.ToString());
+                    currentPiece.AddPiece(p);
+                    if(unary>0) i++;
                 }
-                //check if we have parentheses first
-                //if(regex[i] == '('){}
-                    //Do the parentheses thing
-                int unary = GetUnary(i, regex);
-                Piece p = new Piece(regex[i].ToString(), unary);
-                Console.WriteLine("Symbol "+p.ToString());
-                currentPiece.AddPiece(p);
-                if(unary>0) i++;
+                
             }
             mainPiece.AddPiece(currentPiece);
             //List<Piece> pieces = mainPiece.GetSpawningAutomata();
@@ -210,7 +243,7 @@ namespace FileSearcher
             }
         }
 
-        static List<List<Piece>> ParseRegex(string regex)
+        /*static List<List<Piece>> ParseRegex(string regex)
         {
             List<List<Piece>> automatas = new List<List<Piece>>();
             //while loop
@@ -229,9 +262,6 @@ namespace FileSearcher
                     currentAutomata = new List<Piece>();
                     i++;
                 }
-                //check if we have parentheses first
-                //if(regex[i] == '('){}
-                    //Do the parentheses thing
                 int unary = GetUnary(i, regex);
                 Piece p = new Piece(regex[i].ToString(), unary);
                 currentAutomata.Add(p);
@@ -240,7 +270,7 @@ namespace FileSearcher
 
             automatas.Add(currentAutomata);
             return automatas;
-        }
+        }*/
 
         static void PrintFiles(string directory)
         {
