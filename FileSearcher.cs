@@ -13,17 +13,22 @@ namespace FileSearcher
         bool isAtomic = true;
         
 
-        public Piece(){}
+        public Piece()
+        {
+            this.spawningAutomata = new List<Piece>();
+        }
 
         public Piece(string symbol)
         {
             this.symbol = symbol;
+            this.spawningAutomata = new List<Piece>();
         }
 
         public Piece(string symbol, int unary)
         {
             this.symbol = symbol;
             this.unary = unary;
+            this.spawningAutomata = new List<Piece>();
         }
 
         public void AddSymbol(string symbol)
@@ -57,6 +62,15 @@ namespace FileSearcher
             return this.isAtomic;
         }
 
+        public List<Piece> GetSpawningAutomata()
+        {
+            return this.spawningAutomata;
+        }
+
+        public void AddPiece(Piece piece)
+        {
+            this.spawningAutomata.Add(piece);
+        }
 
 
     }
@@ -143,14 +157,48 @@ namespace FileSearcher
             }
         }
 
+        static Piece ParseReg(string regex)
+        {
+            Piece mainPiece = new Piece();
+            mainPiece.SetAtomic(false);
+            Piece currentPiece = new Piece();
+            currentPiece.SetAtomic(false);                                                             
+            //   ab+dc
+            for (int i = 0; i < regex.Length; i++)
+            {
+                if(regex[i] == '(')
+                {
+                    //when you find a parenthesis, you make a piece that is not atomic and leads to another automata
+                }
+                int binary = GetBinary(i,regex);
+                if(binary == 1) //means we found union
+                {
+                    mainPiece.AddPiece(currentPiece);
+                    currentPiece = new Piece();
+                    i++;
+                }
+                //check if we have parentheses first
+                //if(regex[i] == '('){}
+                    //Do the parentheses thing
+                int unary = GetUnary(i, regex);
+                Piece p = new Piece(regex[i].ToString(), unary);
+                currentPiece.AddPiece(p);
+                if(unary>0) i++;
+            }
+            return mainPiece;
+        }
         static List<List<Piece>> ParseRegex(string regex)
         {
             List<List<Piece>> automatas = new List<List<Piece>>();
             //while loop
             List<Piece> currentAutomata = new List<Piece>();
-            //a+b*
+
             for (int i = 0; i < regex.Length; i++)
             {
+                if(regex[i] == '(')
+                {
+                    //when you find a parenthesis, you make a piece that is not atomic and leads to another automata
+                }
                 int binary = GetBinary(i,regex);
                 if(binary == 1) //means we found union
                 {
