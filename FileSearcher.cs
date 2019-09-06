@@ -11,7 +11,7 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            FilesWithRegex("ac+b","lol");
+            FilesWithRegex("ab(a+b)*","lol");
         }
         
         static int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -49,26 +49,27 @@ namespace FileSearcher
         static void FilesWithRegex(string regex, string directory)
         {
             Piece automatas = ParseReg(regex);
-            Console.WriteLine(automatas.GetUnions().Count);
-            Print(automatas);
+            Print(automatas,1);
         }
 
-        static void Print(Piece automata)
+        static void Print(Piece automata, int tabs)
         {
-            if(automata!=null){
+            if(automata!=null)
+            {
+                Console.WriteLine("Automata's unions: " + automata.GetUnions().Count + " " + automata.GetUnary());
                 foreach(Piece p in automata.GetUnions())
-                {
-                    Console.WriteLine("Next automata's unions: " + p.GetUnions().Count);
-                    Print(p);
+                {   
+                    //PrintTabs(tabs);
+                    Print(p,tabs+1);
                 }
 
-                if(automata.GetSymbol() != null || automata.GetSymbol() != "")
+                if(automata.GetSymbol() != null)
                 {
-                    
+                    //PrintTabs(tabs);
                     Console.WriteLine(automata.ToString()+" "+automata.GetUnary());
                 }
                 
-                Print(automata.GetConcatenation());
+                Print(automata.GetConcatenation(),tabs+1);
             }
         }
 

@@ -43,10 +43,11 @@ namespace FileSearcher
             this.unary = unary;
         }
 
-        public void SetAtomic(bool isAtomic)
+        /*public void SetAtomic(bool isAtomic)
         {
             this.isAtomic = isAtomic;
         }
+        */
 
         public void SetNext(Piece piece)
         {
@@ -94,7 +95,7 @@ namespace FileSearcher
             }
 
             current.concatenation = piece;
-            
+
             this.hasContent = true;
         }
 
