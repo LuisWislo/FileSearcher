@@ -50,6 +50,7 @@ namespace FileSearcher
         {
             Piece automatas = ParseReg(regex);
             Print(automatas,1);
+            EvaluateTitle(automatas, "holis", 0);
         }
 
         static void Print(Piece automata, int tabs)
@@ -142,6 +143,31 @@ namespace FileSearcher
             mainPiece.AddUnion(currentPiece);
             return mainPiece;
         }
+
+        static bool EvaluateTitle(Piece automata, string title, int currentChar)
+        { //may need a unary attribute
+            if(automata!=null)
+            {
+                foreach(Piece p in automata.GetUnions())
+                {
+                    EvaluateTitle(p,title,currentChar); //return boolean and evaluate it
+                }
+
+                if(automata.GetSymbol() != null)
+                {
+                    return CompareSymbol(title[currentChar].ToString(), automata.GetSymbol());
+                }
+                
+            }
+
+            return false;
+        }
+
+        private static bool CompareSymbol(string symbolA, string symbolB)
+        {
+            return symbolA == symbolB; //may be cause of error if it's like java
+        }
+
 
         static void PrintAutomata(Piece piece, int tabs)
         {   
