@@ -11,7 +11,7 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            FilesWithRegex("ab(a+b)*","lol");
+            FilesWithRegex("ab+ce","lol");
         }
         
         static int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -50,7 +50,7 @@ namespace FileSearcher
         {
             Piece automatas = ParseReg(regex);
             Print(automatas,1);
-            EvaluateTitle(automatas, "holis", 0);
+            EvaluateTitle(automatas, "abcedario", 0);
         }
 
         static void Print(Piece automata, int tabs)
@@ -148,19 +148,30 @@ namespace FileSearcher
         { //may need a unary attribute
             if(automata!=null)
             {
-                foreach(Piece p in automata.GetUnions())
+                if(automata.GetUnions().Count>0)
                 {
-                    EvaluateTitle(p,title,currentChar); //return boolean and evaluate it
+                    foreach(Piece p in automata.GetUnions())
+                    {
+                        bool matchesUnion = EvaluateTitle(p,title,currentChar); //return boolean and evaluate it
+                        if(matchesUnion) return true;
+                    }
                 }
-
-                if(automata.GetSymbol() != null)
+                
+                else
                 {
-                    return CompareSymbol(title[currentChar].ToString(), automata.GetSymbol());
+                    if(automata.GetSymbol() != null)
+                    {
+                        bool comparison = CompareSymbol(title[currentChar].ToString(), automata.GetSymbol());
+                        if(!comparison) return false;
+                    }
+                
+                    EvaluateTitle(automata.GetConcatenation(), title, currentChar+1);
+
                 }
                 
             }
-
-            return false;
+            
+            return true;
         }
 
         private static bool CompareSymbol(string symbolA, string symbolB)
