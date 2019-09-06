@@ -11,7 +11,7 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            FilesWithRegex("ab+ce","lol");
+            FilesWithRegex("abd+abz","lol");
         }
         
         static int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -49,8 +49,8 @@ namespace FileSearcher
         static void FilesWithRegex(string regex, string directory)
         {
             Piece automatas = ParseReg(regex);
-            Print(automatas,1);
-            EvaluateTitle(automatas, "abcedario", 0);
+            //Print(automatas,1);
+            Console.WriteLine(EvaluateTitle(automatas, "abcedario", 0));
         }
 
         static void Print(Piece automata, int tabs)
@@ -165,17 +165,20 @@ namespace FileSearcher
                         if(!comparison) return false;
                     }
                 
-                    EvaluateTitle(automata.GetConcatenation(), title, currentChar+1);
-
+                    return EvaluateTitle(automata.GetConcatenation(), title, currentChar+1);
                 }
-                
             }
-            
-            return true;
+            else
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static bool CompareSymbol(string symbolA, string symbolB)
         {
+
             return symbolA == symbolB; //may be cause of error if it's like java
         }
 
