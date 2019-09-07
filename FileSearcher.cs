@@ -7,14 +7,20 @@ namespace FileSearcher
 {
     class FileSearcher
     {
+        private int currentCharG;
+
+        public FileSearcher(string regex, string directory)
+        {
+            FilesWithRegex(regex,directory);
+        }
         static void Main(String[] args)
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            FilesWithRegex("bce+z","lol"); 
+            new FileSearcher("(a)+(ab)","lol"); 
         }
         
-        static int GetUnary(int current, string regex) //supposed to only work with chracters
+        int GetUnary(int current, string regex) //supposed to only work with chracters
         {
             if(current<regex.Length-1)
             {
@@ -37,7 +43,7 @@ namespace FileSearcher
             // kleene -> 2
         }
 
-        private static int GetBinary(int current, string regex)
+        private int GetBinary(int current, string regex)
         {
             switch(regex[current])
             {
@@ -46,15 +52,15 @@ namespace FileSearcher
             }
         }
 
-        static void FilesWithRegex(string regex, string directory)
+        void FilesWithRegex(string regex, string directory)
         {
             Piece automatas = ParseReg(regex);
             //Print(automatas,1);
-            Console.WriteLine(EvaluateTitle(automatas, "abcedario", 0));
+            Console.WriteLine(EvaluateTitle(automatas, "ababcedario", 0));
             //should be done with every substring bcabedario
         }
 
-        static void Print(Piece automata, int tabs)
+        void Print(Piece automata, int tabs)
         {
             if(automata!=null)
             {
@@ -75,7 +81,7 @@ namespace FileSearcher
             }
         }
 
-        static Piece ParseReg(string regex)
+        Piece ParseReg(string regex)
         {
             Piece mainPiece = new Piece();
             //mainPiece.SetAtomic(false);
@@ -145,7 +151,7 @@ namespace FileSearcher
             return mainPiece;
         }
 
-        static bool EvaluateTitle(Piece automata, string title, int currentChar)
+        bool EvaluateTitle(Piece automata, string title, int currentChar)
         { //may need a unary attribute
             if(automata!=null)
             {
@@ -155,12 +161,13 @@ namespace FileSearcher
 
                     foreach(Piece p in automata.GetUnions())
                     {
-                        bool matchesUnion = EvaluateTitle(p,title,currentChar); //return boolean and evaluate it
+                        bool matchesUnion = EvaluateTitle(p,title,currentChar); //use normal variables here
                         if(matchesUnion) goToConcats = true;
                     }
 
                     if(!goToConcats) return false;
-                    return EvaluateTitle(automata.GetConcatenation(),title,currentChar+1);
+                    return EvaluateTitle(automata.GetConcatenation(),title,currentCharG+1); //problem with current character, when connecting a container to another
+                    //use global varaible here
                 }
                 
                 else
@@ -170,6 +177,7 @@ namespace FileSearcher
                         //check if kleene or positive
                         bool comparison = CompareSymbol(title[currentChar].ToString(), automata.GetSymbol());
                         if(!comparison) return false;
+                        currentCharG = currentChar;
                     }
                     
                     return EvaluateTitle(automata.GetConcatenation(), title, currentChar+1);
@@ -185,14 +193,14 @@ namespace FileSearcher
             //return false;
         }
 
-        private static bool CompareSymbol(string symbolA, string symbolB)
+        private bool CompareSymbol(string symbolA, string symbolB)
         {
 
             return symbolA == symbolB;
         }
 
 
-        static void PrintAutomata(Piece piece, int tabs)
+        void PrintAutomata(Piece piece, int tabs)
         {   
             PrintTabs(tabs);
             Console.WriteLine("Automata " + piece.GetUnary()+":");
@@ -209,7 +217,7 @@ namespace FileSearcher
             }
         }
 
-        static void PrintTabs(int tabs)
+        void PrintTabs(int tabs)
         {
             for (int i = 0; i < tabs; i++)
             {
@@ -217,7 +225,7 @@ namespace FileSearcher
             }
         }
 
-        static void PrintFiles(string directory)
+        void PrintFiles(string directory)
         {
             foreach(string f in Directory.GetFiles(directory))
             {
