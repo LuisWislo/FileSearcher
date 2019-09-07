@@ -83,6 +83,7 @@ namespace FileSearcher
         public void AddUnion(Piece piece)
         {
             this.unions.Add(piece);
+            this.hasContent = true;
         }
 
         public void Concatenate(Piece piece)

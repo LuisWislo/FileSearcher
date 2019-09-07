@@ -11,7 +11,7 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            FilesWithRegex("xyz+(bc+a)","lol"); 
+            FilesWithRegex("bce+z","lol"); 
         }
         
         static int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -50,7 +50,7 @@ namespace FileSearcher
         {
             Piece automatas = ParseReg(regex);
             //Print(automatas,1);
-            Console.WriteLine(EvaluateTitle(automatas, "abcabedario", 0));
+            Console.WriteLine(EvaluateTitle(automatas, "abcedario", 0));
             //should be done with every substring bcabedario
         }
 
@@ -151,22 +151,30 @@ namespace FileSearcher
             {
                 if(automata.GetUnions().Count>0)
                 {
+                    bool goToConcats = false;
+
                     foreach(Piece p in automata.GetUnions())
                     {
                         bool matchesUnion = EvaluateTitle(p,title,currentChar); //return boolean and evaluate it
-                        if(matchesUnion) return true;
+                        if(matchesUnion) goToConcats = true;
                     }
+
+                    if(!goToConcats) return false;
+                    return EvaluateTitle(automata.GetConcatenation(),title,currentChar+1);
                 }
                 
                 else
                 {
                     if(automata.GetSymbol() != null)
                     {
+                        //check if kleene or positive
                         bool comparison = CompareSymbol(title[currentChar].ToString(), automata.GetSymbol());
                         if(!comparison) return false;
                     }
-                
+                    
                     return EvaluateTitle(automata.GetConcatenation(), title, currentChar+1);
+                    //else
+                    //EvaluateTitle(sameAutomata)
                 }
             }
             else
@@ -174,13 +182,13 @@ namespace FileSearcher
                 return true;
             }
 
-            return false;
+            //return false;
         }
 
         private static bool CompareSymbol(string symbolA, string symbolB)
         {
 
-            return symbolA == symbolB; //may be cause of error if it's like java
+            return symbolA == symbolB;
         }
 
 
