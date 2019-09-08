@@ -17,7 +17,7 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            new FileSearcher("a*(bc)","lol"); 
+            new FileSearcher("((a*+bc)*)lol","lol"); 
         }
         
         int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -56,7 +56,7 @@ namespace FileSearcher
         {
             Piece automatas = ParseReg(regex);
             //Print(automatas,1);
-            Console.WriteLine(EvaluateTitle(automatas, "bcabpepe", 0));
+            Console.WriteLine(EvaluateTitle(automatas, "abcbcalolaaaax", 0));
             //should be done with every substring bcabedario
         }
 
@@ -165,6 +165,10 @@ namespace FileSearcher
                         {
                             currentCharG = currentChar;
                         }
+                        else
+                        {
+                            return EvaluateTitle(automata.GetConcatenation(),title,currentChar); 
+                        }
 
                         while(comparison)
                         {
@@ -174,22 +178,29 @@ namespace FileSearcher
                             
                         }
 
-                        //currentCharG = currentChar;
-
                         return EvaluateTitle(automata.GetConcatenation(),title,currentChar+1); 
                     }
 
                     else
                     {
+                        int snapshot = -1;
                         //remove kleene attribute
                         automata.SetUnary(0);
                         bool comparison = EvaluateTitle(automata,title,currentChar);
+                        if(!comparison) 
+                        {
+                            //currentCharG = currentChar;
+                            return EvaluateTitle(automata.GetConcatenation(),title,currentChar);
+                        }
+                        
                         while(comparison)
                         { //use global variable?
+                            snapshot = currentCharG;
                             comparison = EvaluateTitle(automata,title,currentCharG+1);
                         }
 
-                        return EvaluateTitle(automata.GetConcatenation(),title,currentCharG+1);
+                        currentCharG = snapshot;
+                        return EvaluateTitle(automata.GetConcatenation(),title,currentCharG+1); //use snapshot here
                     }
                     
                     //EvaluateTitle(automata, title, currentChar);
