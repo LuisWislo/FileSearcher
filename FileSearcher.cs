@@ -7,7 +7,7 @@ namespace FileSearcher
 {
     class FileSearcher
     {
-        private int currentCharG;
+        private int currentCharG=-1;
 
         public FileSearcher(string regex, string directory)
         {
@@ -17,7 +17,7 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            new FileSearcher("(ab)((xyz)+(ab))ab","lol"); 
+            new FileSearcher("a*(bc)","lol"); 
         }
         
         int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -56,7 +56,7 @@ namespace FileSearcher
         {
             Piece automatas = ParseReg(regex);
             //Print(automatas,1);
-            Console.WriteLine(EvaluateTitle(automatas, "abababcedario", 0));
+            Console.WriteLine(EvaluateTitle(automatas, "bcabpepe", 0));
             //should be done with every substring bcabedario
         }
 
@@ -155,6 +155,49 @@ namespace FileSearcher
         { //may need a unary attribute
             if(automata!=null)
             {
+                if(automata.GetNumericUnary()==2) //kleene spotted
+                { //may not be xactly as the one below, since this one is kleene and accepts 0 ocurrences
+                    
+                    if(automata.GetSymbol() != null)
+                    {
+                        bool comparison = CompareSymbol(title[currentChar].ToString(),automata.GetSymbol());
+                        if(comparison)
+                        {
+                            currentCharG = currentChar;
+                        }
+
+                        while(comparison)
+                        {
+                            comparison = CompareSymbol(title[++currentChar].ToString(),automata.GetSymbol());
+                            if(!comparison) currentChar--;
+                            else currentCharG = currentChar;
+                            
+                        }
+
+                        //currentCharG = currentChar;
+
+                        return EvaluateTitle(automata.GetConcatenation(),title,currentChar+1); 
+                    }
+
+                    else
+                    {
+                        //remove kleene attribute
+                        automata.SetUnary(0);
+                        bool comparison = EvaluateTitle(automata,title,currentChar);
+                        while(comparison)
+                        { //use global variable?
+                            comparison = EvaluateTitle(automata,title,currentCharG+1);
+                        }
+
+                        return EvaluateTitle(automata.GetConcatenation(),title,currentCharG+1);
+                    }
+                    
+                    //EvaluateTitle(automata, title, currentChar);
+                    //if it doesnt have unions, then use symbol only
+                    //if it has unions, 
+                   
+                    //while()
+                }
                 if(automata.GetUnions().Count>0)
                 {
                     bool goToConcats = false;
