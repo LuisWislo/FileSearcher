@@ -17,7 +17,7 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            new FileSearcher("(a*b)*","lol"); 
+            new FileSearcher("abc(abc)*","lol"); 
         }
         
         int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -56,7 +56,7 @@ namespace FileSearcher
         {
             Piece automatas = ParseReg(regex);
             //Print(automatas,1);
-            Console.WriteLine(EvaluateTitle(automatas, "daaaabaabxd", 0));
+            Console.WriteLine(EvaluateTitle(automatas, "abedario", 0));
             //should be done with every substring bcabedario
         }
 
@@ -155,7 +155,7 @@ namespace FileSearcher
         { //may need a unary attribute
             if(automata!=null)
             {
-                if(automata.GetNumericUnary()==2) //kleene spotted
+                if(automata.GetNumericUnary()==2 || automata.GetNumericUnary()==1) //kleene spotted
                 { //may not be xactly as the one below, since this one is kleene and accepts 0 ocurrences
                     
                     if(automata.GetSymbol() != null)
@@ -167,7 +167,8 @@ namespace FileSearcher
                         }
                         else
                         {   
-                            return EvaluateTitle(automata.GetConcatenation(),title,currentChar);
+                            if(automata.GetNumericUnary() == 2) return EvaluateTitle(automata.GetConcatenation(),title,currentChar);
+                            return false;
                         }
 
                         while(comparison)
@@ -185,18 +186,23 @@ namespace FileSearcher
                     {
                         int snapshot = -1;
                         //remove kleene attribute
+                        int prevUnary = automata.GetNumericUnary();
                         automata.SetUnary(0);
                         bool comparison = EvaluateTitle(automata,title,currentChar);
+                        automata.SetUnary(prevUnary);
                         if(!comparison) 
                         {
                             //currentCharG = currentChar;
-                            return EvaluateTitle(automata.GetConcatenation(),title,currentChar);
+                            if(automata.GetNumericUnary() == 2) return EvaluateTitle(automata.GetConcatenation(),title,currentChar);
+                            return false;
                         }
                         
                         while(comparison && snapshot!=currentCharG)
                         { //use global variable?
                             snapshot = currentCharG;
+                            automata.SetUnary(0);
                             comparison = EvaluateTitle(automata,title,currentCharG+1);
+                            automata.SetUnary(prevUnary);
                         }
 
                         currentCharG = snapshot;
@@ -204,7 +210,7 @@ namespace FileSearcher
                     }
                 }
                 
-                if(automata.GetNumericUnary()==1) //kleene spotted
+                /*if(automata.GetNumericUnary()==1) //kleene spotted
                 { //may not be xactly as the one below, since this one is kleene and accepts 0 ocurrences
                     
                     if(automata.GetSymbol() != null)
@@ -251,6 +257,7 @@ namespace FileSearcher
                         return EvaluateTitle(automata.GetConcatenation(),title,currentCharG+1); //use snapshot here
                     }
                 }
+                */
 
                 if(automata.GetUnions().Count>0)
                 {
