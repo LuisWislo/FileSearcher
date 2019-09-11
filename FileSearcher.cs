@@ -17,7 +17,7 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            new FileSearcher("((a*+bc)*)lol","lol"); 
+            new FileSearcher("((c+d)*)lol","lol"); 
         }
         
         int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -56,7 +56,7 @@ namespace FileSearcher
         {
             Piece automatas = ParseReg(regex);
             //Print(automatas,1);
-            Console.WriteLine(EvaluateTitle(automatas, "abcbcalolaaaax", 0));
+            Console.WriteLine(EvaluateTitle(automatas, "lol", 0));
             //should be done with every substring bcabedario
         }
 
@@ -193,7 +193,7 @@ namespace FileSearcher
                             return EvaluateTitle(automata.GetConcatenation(),title,currentChar);
                         }
                         
-                        while(comparison)
+                        while(comparison && snapshot!=currentCharG)
                         { //use global variable?
                             snapshot = currentCharG;
                             comparison = EvaluateTitle(automata,title,currentCharG+1);
