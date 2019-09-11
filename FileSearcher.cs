@@ -17,7 +17,7 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            new FileSearcher("((c+d)*)lol","lol"); 
+            new FileSearcher("(a*b)*","lol"); 
         }
         
         int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -56,7 +56,7 @@ namespace FileSearcher
         {
             Piece automatas = ParseReg(regex);
             //Print(automatas,1);
-            Console.WriteLine(EvaluateTitle(automatas, "lol", 0));
+            Console.WriteLine(EvaluateTitle(automatas, "daaaabaabxd", 0));
             //should be done with every substring bcabedario
         }
 
@@ -166,8 +166,8 @@ namespace FileSearcher
                             currentCharG = currentChar;
                         }
                         else
-                        {
-                            return EvaluateTitle(automata.GetConcatenation(),title,currentChar); 
+                        {   
+                            return EvaluateTitle(automata.GetConcatenation(),title,currentChar);
                         }
 
                         while(comparison)
@@ -202,13 +202,56 @@ namespace FileSearcher
                         currentCharG = snapshot;
                         return EvaluateTitle(automata.GetConcatenation(),title,currentCharG+1); //use snapshot here
                     }
-                    
-                    //EvaluateTitle(automata, title, currentChar);
-                    //if it doesnt have unions, then use symbol only
-                    //if it has unions, 
-                   
-                    //while()
                 }
+                
+                if(automata.GetNumericUnary()==1) //kleene spotted
+                { //may not be xactly as the one below, since this one is kleene and accepts 0 ocurrences
+                    
+                    if(automata.GetSymbol() != null)
+                    {
+                        bool comparison = CompareSymbol(title[currentChar].ToString(),automata.GetSymbol());
+                        if(comparison)
+                        {
+                            currentCharG = currentChar;
+                        }
+                        else
+                        {   
+                            return false; 
+                        }
+
+                        while(comparison)
+                        {
+                            comparison = CompareSymbol(title[++currentChar].ToString(),automata.GetSymbol());
+                            if(!comparison) currentChar--;
+                            else currentCharG = currentChar;
+                            
+                        }
+
+                        return EvaluateTitle(automata.GetConcatenation(),title,currentChar+1); 
+                    }
+
+                    else
+                    {
+                        int snapshot = -1;
+                        //remove kleene attribute
+                        automata.SetUnary(0);
+                        bool comparison = EvaluateTitle(automata,title,currentChar);
+                        if(!comparison) 
+                        {
+                            return false;
+                        }
+                        
+                        while(comparison && snapshot!=currentCharG)
+                        { //use global variable?
+                            snapshot = currentCharG;
+                            comparison = EvaluateTitle(automata,title,currentCharG+1);
+                        }
+
+                        currentCharG = snapshot;
+                        return EvaluateTitle(automata.GetConcatenation(),title,currentCharG+1); //use snapshot here
+                    }
+                }
+
                 if(automata.GetUnions().Count>0)
                 {
                     bool goToConcats = false;
