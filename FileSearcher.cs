@@ -17,7 +17,8 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            new FileSearcher("((a+b)*)xd","lol"); 
+            new FileSearcher("((uwu)*)xd","lal"); 
+            
         }
         
         int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -54,10 +55,26 @@ namespace FileSearcher
 
         void FilesWithRegex(string regex, string directory)
         {
+            
             Piece automatas = ParseReg(regex);
-            //Print(automatas,1);
-            Console.WriteLine(EvaluateTitle(automatas, "aaaaxd", 0));
+            MatchingFiles("C:\\Users\\roflm\\Desktop\\uwu",automatas);
+            //Console.WriteLine(EvaluateTitle(automatas, "aaaa", 0));
+            //Console.WriteLine(TestDocument("loveaa",automatas));
             //should be done with every substring bcabedario
+        }
+
+        bool TestDocument(string docName, Piece automatas)
+        {
+            for (int i = 0; i < docName.Length; i++)
+            {
+                //make sure automata is is no way modified (take and return)
+                currentCharG = -1;
+                //Console.WriteLine(docName.Substring(i,docName.Length-i));
+                bool matchesRegex = EvaluateTitle(automatas,docName.Substring(i,docName.Length-i),0);
+                if(matchesRegex) return true;
+            }
+
+            return false;
         }
 
         void Print(Piece automata, int tabs)
@@ -291,16 +308,21 @@ namespace FileSearcher
             }
         }
 
-        void PrintFiles(string directory)
+        void MatchingFiles(string directory, Piece automatas)
         {
+            Console.WriteLine(directory);
             foreach(string f in Directory.GetFiles(directory))
             {
-                Console.WriteLine(f);
+                string[] separatedPath = f.Split('\\');
+                string[] fileNameWithExtension = separatedPath[separatedPath.Length-1].Split('.');
+                string fileName = fileNameWithExtension[0];
+                bool matches = TestDocument(fileName, automatas);     
+                if(matches) Console.WriteLine(f);
             }
 
             foreach(string d in Directory.GetDirectories(directory))
             {
-                PrintFiles(d);
+                MatchingFiles(d, automatas);
             }
         }
 
