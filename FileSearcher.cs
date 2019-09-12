@@ -17,8 +17,7 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            new FileSearcher("abc((abc)*)+zd","lal"); 
-            
+            new FileSearcher("a","lal"); 
         }
         
         int GetUnary(int current, string regex) //supposed to only work with chracters
@@ -57,11 +56,9 @@ namespace FileSearcher
         {
             
             Piece automatas = ParseReg(regex);
-            //MatchingFiles("C:\\Users\\roflm\\Desktop\\Carpeta",automatas,0);
-            Console.WriteLine(MatchesInPlainText("C:\\Users\\roflm\\Desktop\\Carpeta\\abcabcedaro.txt",automatas));
-            //Console.WriteLine(EvaluateTitle(automatas, "aaaa", 0));
-            //Console.WriteLine(TestDocument("loveaa",automatas));
-            //should be done with every substring bcabedario
+            MatchingFiles("C:\\Users\\roflm\\Desktop\\Carpetazo",automatas,0);
+            //Console.WriteLine(MatchesInPlainText("C:\\Users\\roflm\\Desktop\\Carpetazo",automatas));
+            //Directory.GetFiles("C:\\Users\\roflm\\Desktop\\Carpetazo");
         }
 
         bool TestDocument(string docName, Piece automatas)
@@ -310,10 +307,10 @@ namespace FileSearcher
             }
         }
 
-        bool MatchesInPlainText(string path, Piece automatas)
-        {
+        bool MatchesInPlainText(string path, Piece automatas, string extension)
+        {   
+            if(extension != "txt") return false;
             string text = File.ReadAllText(path);
-            //may contain spaces
             if(text == null || text == "") return false;
             return TestDocument(text, automatas);
         }
@@ -330,7 +327,7 @@ namespace FileSearcher
                 string[] fileNameWithExtension = separatedPath[separatedPath.Length-1].Split('.');
                 string fileName = fileNameWithExtension[0];
                 bool matchesTitle = TestDocument(fileName, automatas);
-                bool matchesInPlainText = MatchesInPlainText(f, automatas);
+                bool matchesInPlainText = MatchesInPlainText(f, automatas, fileNameWithExtension[1]);
                      
                 if(matchesTitle) tag += "title, ";
                 if(matchesInPlainText) tag+= "plain text, ";
@@ -340,7 +337,6 @@ namespace FileSearcher
                     Identate(identation+1);
                     Console.WriteLine("[File] " + f + tag + ")");
                 }
-                
             }
 
             foreach(string d in Directory.GetDirectories(directory))
