@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\roflm\\Desktop\\tooie\\FileSearcher\\FileSearcher.csproj": {}
+    "C:\\Users\\roflm\\Desktop\\broken mold\\FileSearcher\\FileSearcher.csproj": {}
   },
   "projects": {
-    "C:\\Users\\roflm\\Desktop\\tooie\\FileSearcher\\FileSearcher.csproj": {
+    "C:\\Users\\roflm\\Desktop\\broken mold\\FileSearcher\\FileSearcher.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\roflm\\Desktop\\tooie\\FileSearcher\\FileSearcher.csproj",
+        "projectUniqueName": "C:\\Users\\roflm\\Desktop\\broken mold\\FileSearcher\\FileSearcher.csproj",
         "projectName": "FileSearcher",
-        "projectPath": "C:\\Users\\roflm\\Desktop\\tooie\\FileSearcher\\FileSearcher.csproj",
+        "projectPath": "C:\\Users\\roflm\\Desktop\\broken mold\\FileSearcher\\FileSearcher.csproj",
         "packagesPath": "C:\\Users\\roflm\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\roflm\\Desktop\\tooie\\FileSearcher\\obj\\",
+        "outputPath": "C:\\Users\\roflm\\Desktop\\broken mold\\FileSearcher\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

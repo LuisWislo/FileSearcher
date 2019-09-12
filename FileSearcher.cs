@@ -17,7 +17,7 @@ namespace FileSearcher
         {
             //PrintFiles("C:\\Users\\roflm\\Desktop\\Carpeta");
             //Console.WriteLine("hola");
-            new FileSearcher("((uwu)*)xd","lal"); 
+            new FileSearcher("abc((abc)*)+zd","lal"); 
             
         }
         
@@ -57,7 +57,8 @@ namespace FileSearcher
         {
             
             Piece automatas = ParseReg(regex);
-            MatchingFiles("C:\\Users\\roflm\\Desktop\\uwu",automatas);
+            //MatchingFiles("C:\\Users\\roflm\\Desktop\\Carpeta",automatas,0);
+            Console.WriteLine(MatchesInPlainText("C:\\Users\\roflm\\Desktop\\Carpeta\\abcabcedaro.txt",automatas));
             //Console.WriteLine(EvaluateTitle(automatas, "aaaa", 0));
             //Console.WriteLine(TestDocument("loveaa",automatas));
             //should be done with every substring bcabedario
@@ -262,7 +263,8 @@ namespace FileSearcher
                     }
                 }
                 else
-                {
+                {   
+                    if(automata.GetNumericUnary()==2) return true;
                     return false;
                 }
             }
@@ -285,13 +287,13 @@ namespace FileSearcher
 
         void PrintAutomata(Piece piece, int tabs)
         {   
-            PrintTabs(tabs);
+            Identate(tabs);
             Console.WriteLine("Automata " + piece.GetUnary()+":");
             foreach(Piece p in piece.GetUnions())
             {
                 if(p.IsAtomic())
                 {
-                    PrintTabs(tabs);
+                    Identate(tabs);
                     Console.WriteLine(p.ToString()+" "+p.GetUnary());
                 }
                     
@@ -300,29 +302,50 @@ namespace FileSearcher
             }
         }
 
-        void PrintTabs(int tabs)
+        void Identate(int tabs)
         {
             for (int i = 0; i < tabs; i++)
             {
-                Console.Write(" ");
+                Console.Write("   ");
             }
         }
 
-        void MatchingFiles(string directory, Piece automatas)
+        bool MatchesInPlainText(string path, Piece automatas)
         {
-            Console.WriteLine(directory);
+            string text = File.ReadAllText(path);
+            //may contain spaces
+            if(text == null || text == "") return false;
+            return TestDocument(text, automatas);
+        }
+
+        void MatchingFiles(string directory, Piece automatas, int identation)
+        {   
+            Identate(identation);
+            Console.WriteLine("[Directory] " + directory);
+
             foreach(string f in Directory.GetFiles(directory))
             {
+                string tag = " - (";
                 string[] separatedPath = f.Split('\\');
                 string[] fileNameWithExtension = separatedPath[separatedPath.Length-1].Split('.');
                 string fileName = fileNameWithExtension[0];
-                bool matches = TestDocument(fileName, automatas);     
-                if(matches) Console.WriteLine(f);
+                bool matchesTitle = TestDocument(fileName, automatas);
+                bool matchesInPlainText = MatchesInPlainText(f, automatas);
+                     
+                if(matchesTitle) tag += "title, ";
+                if(matchesInPlainText) tag+= "plain text, ";
+                
+                if(matchesTitle || matchesInPlainText)
+                {
+                    Identate(identation+1);
+                    Console.WriteLine("[File] " + f + tag + ")");
+                }
+                
             }
 
             foreach(string d in Directory.GetDirectories(directory))
             {
-                MatchingFiles(d, automatas);
+                MatchingFiles(d, automatas,identation+1);
             }
         }
 
